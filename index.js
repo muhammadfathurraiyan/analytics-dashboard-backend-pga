@@ -10,7 +10,9 @@ const url = process.env.API_URL;
 const token = process.env.API_TOKEN;
 
 app.get("/", async (req, res) => {
-  res.send("Home GET Request");
+  res.send(
+    `<a href="/api">/api</a> to access the API or <a href="/docs">docs</a>`
+  );
 });
 
 /**
