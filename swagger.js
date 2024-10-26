@@ -26,7 +26,7 @@ const options = {
       },
     ],
   },
-  apis: ["index.js"], // Ensure this file path points to your API documentation
+  apis: ["index.js"],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
