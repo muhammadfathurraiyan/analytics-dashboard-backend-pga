@@ -27,19 +27,19 @@ app.get("/", async (req, res) => {
  *       fare amount, distance, or payment type. Only one parameter
  *       should be provided at a time.
  *     parameters:
- *       - name: $fare_amount
+ *       - name: fare_amount
  *         in: query
  *         description: Filter by fare amount.
  *         required: false
  *         schema:
- *           type: number
- *       - name: $distance
+ *           type: string
+ *       - name: distance
  *         in: query
  *         description: Filter by trip distance.
  *         required: false
  *         schema:
- *           type: number
- *       - name: $payment_type
+ *           type: string
+ *       - name: payment_type
  *         in: query
  *         description: Filter by payment type.
  *         required: false
@@ -58,13 +58,19 @@ app.get("/api", async (req, res) => {
   // Create query for SOQL
   let query = "";
 
+  // validate the parameter should only one
+  if (Object.keys(req.query).length > 1) {
+    res.status(400).send("Only one parameter should be provided at a time.");
+    return;
+  }
+
   // Assign query req.query for fetching
-  if (req.query["$fare_amount"]) {
-    query = `$where=fare_amount = ${req.query["$fare_amount"]}`;
-  } else if (req.query["$distance"]) {
-    query = `$where=trip_distance = ${req.query["$distance"]}`;
-  } else if (req.query["$payment_type"]) {
-    query = `$where=payment_type = ${req.query["$payment_type"]}`;
+  if (req.query["fare_amount"]) {
+    query = `$where=fare_amount = ${req.query["fare_amount"]}`;
+  } else if (req.query["distance"]) {
+    query = `$where=trip_distance = ${req.query["distance"]}`;
+  } else if (req.query["payment_type"]) {
+    query = `$where=payment_type = ${req.query["payment_type"]}`;
   }
 
   // Check if query for SOQL exists, if it is concatenate URL and query if not just put URL
@@ -86,7 +92,7 @@ app.get("/api", async (req, res) => {
 
     const result = await response.json();
 
-    // Create trip_time record since the result didn't have trip_time record
+    // Create trip_time record cuz the result didn't have trip_time record
     const processedData = result
       .map((col) => {
         // Get tripTime by subtracting dropoff and pickup time
@@ -99,7 +105,7 @@ app.get("/api", async (req, res) => {
       })
       .sort((a, b) => a.trip_time - b.trip_time);
 
-    res.send(processedData);
+    res.status(200).send(processedData);
   } catch (error) {
     res.status(500).send("Server error");
   }
