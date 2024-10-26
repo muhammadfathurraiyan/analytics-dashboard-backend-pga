@@ -8,9 +8,6 @@ const port = 3000;
 const url = process.env.API_URL;
 const token = process.env.API_TOKEN;
 
-const CSS_URL =
-  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
-
 app.get("/", async (req, res) => {
   res.send(
     `<a href="/api">/api</a> to access the API or <a href="/docs">docs</a>`
@@ -145,7 +142,7 @@ const swaggerSpec = swaggerJsdoc(options);
 app.use(
   "/docs",
   swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, { customCssUrl: CSS_URL })
+  swaggerUi.setup(swaggerSpec)
 );
 
 app.listen(port, () => {
