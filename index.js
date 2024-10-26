@@ -1,13 +1,15 @@
-import express from "express";
-import dotenv from "dotenv";
-import swaggerDocs from "./swagger.js";
-
-dotenv.config();
+const express = require("express");
+require("dotenv").config();
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 const app = express();
 const port = 3000;
 const url = process.env.API_URL;
 const token = process.env.API_TOKEN;
+
+const CSS_URL =
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 
 app.get("/", async (req, res) => {
   res.send(
@@ -53,7 +55,6 @@ app.get("/", async (req, res) => {
  *       '500':
  *         description: Server Error
  */
-
 app.get("/api", async (req, res) => {
   // Create query for SOQL
   let query = "";
@@ -111,8 +112,44 @@ app.get("/api", async (req, res) => {
   }
 });
 
-swaggerDocs(app, port);
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Trip Api",
+      description:
+        "API endpoints for analytics Trip API documented on Swagger.",
+      contact: {
+        name: "Muhammad Fathur Raiyan",
+        email: "raiyanfathur@gmail.com",
+        url: "https://github.com/muhammadfathurraiyan/analytics-dashboard-backend-pga",
+      },
+      version: "1.0.0",
+    },
+    servers: [
+      {
+        url: "http://localhost:3000",
+        description: "Local server",
+      },
+      {
+        url: "https://analytics-dashboard-backend-pga.vercel.app",
+        description: "Live server",
+      },
+    ],
+  },
+  apis: ["index.js"],
+};
+
+const swaggerSpec = swaggerJsdoc(options);
+
+app.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, { customCssUrl: CSS_URL })
+);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+module.exports = app;
