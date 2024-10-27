@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+const cors = require("cors");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
@@ -10,6 +11,8 @@ const token = process.env.API_TOKEN;
 
 const CSS_URL =
   "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
+
+app.use(cors());
 
 app.get("/", async (req, res) => {
   res.send(
@@ -61,7 +64,9 @@ app.get("/api", async (req, res) => {
 
   // validate the parameter should only one
   if (Object.keys(req.query).length > 1) {
-    res.status(400).send("Only one parameter should be provided at a time.");
+    res
+      .status(400)
+      .json({ error: "Only one parameter should be provided at a time." });
     return;
   }
 
@@ -106,9 +111,9 @@ app.get("/api", async (req, res) => {
       })
       .sort((a, b) => a.trip_time - b.trip_time);
 
-    res.status(200).send(processedData);
+    res.status(200).json(processedData);
   } catch (error) {
-    res.status(500).send("Server error");
+    res.status(500).json({ error: "Server error" });
   }
 });
 
