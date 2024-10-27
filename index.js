@@ -99,17 +99,15 @@ app.get("/api", async (req, res) => {
     const result = await response.json();
 
     // Create trip_time record cuz the result didn't have trip_time record
-    const processedData = result
-      .map((col) => {
-        // Get tripTime by subtracting dropoff and pickup time
-        const tripTime =
-          new Date(col.dropoff_datetime) - new Date(col.pickup_datetime);
-        return {
-          ...col,
-          trip_time: tripTime,
-        };
-      })
-      .sort((a, b) => a.trip_time - b.trip_time);
+    const processedData = result.map((col) => {
+      // Get tripTime by subtracting dropoff and pickup time
+      const tripTime =
+        new Date(col.dropoff_datetime) - new Date(col.pickup_datetime);
+      return {
+        ...col,
+        trip_time: tripTime.toString(),
+      };
+    });
 
     res.status(200).json(processedData);
   } catch (error) {
